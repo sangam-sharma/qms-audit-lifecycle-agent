@@ -1,0 +1,88 @@
+[
+  {
+    "audit": {
+      "id": "audit-1001",
+      "code": "IA-2026-001",
+      "project_name": "Supplier Qualification Refresh",
+      "department": "Quality Assurance",
+      "framework": "ISO 9001:2015",
+      "planned_start_date": "2026-11-16",
+      "planned_end_date": "2026-11-17",
+      "status": "PENDING_ASSIGNMENT",
+      "created_at": "2026-10-28T09:00:00Z"
+    },
+    "assignments": [],
+    "schedule": null,
+    "checklist_items": [
+      {"id":"item-1001-1","audit_id":"audit-1001","item_code":"SUP-01","question":"Are approved suppliers evaluated at planned intervals?","result":"PENDING","remarks":""},
+      {"id":"item-1001-2","audit_id":"audit-1001","item_code":"SUP-02","question":"Are supplier qualification records retained?","result":"PENDING","remarks":""}
+    ],
+    "non_conformities": []
+  },
+  {
+    "audit": {
+      "id": "audit-1002",
+      "code": "IA-2026-002",
+      "project_name": "Training Records Control",
+      "department": "Human Resources",
+      "framework": "ISO 9001:2015",
+      "planned_start_date": "2026-11-09",
+      "planned_end_date": "2026-11-10",
+      "status": "ASSIGNED",
+      "created_at": "2026-10-15T11:30:00Z"
+    },
+    "assignments": [
+      {"id":"assign-1002-1","audit_id":"audit-1002","auditor_name":"A. Patel (Primary)","assignment_type":"PRIMARY","orientation_status":"COMPLETED"},
+      {"id":"assign-1002-2","audit_id":"audit-1002","auditor_name":"J. Kim (Secondary)","assignment_type":"SECONDARY","orientation_status":"PENDING"}
+    ],
+    "schedule": {
+      "id":"schedule-1002",
+      "audit_id":"audit-1002",
+      "scheduled_start":"2026-11-09T09:00:00Z",
+      "scheduled_end":"2026-11-10T17:00:00Z",
+      "status":"SCHEDULED",
+      "confirmations":["COMBINED"]
+    },
+    "checklist_items": [
+      {"id":"item-1002-1","audit_id":"audit-1002","item_code":"TRN-01","question":"Are role-based training requirements defined?","result":"COMPLIANT","remarks":"Training matrix reviewed."},
+      {"id":"item-1002-2","audit_id":"audit-1002","item_code":"TRN-02","question":"Are training completion records retained?","result":"PENDING","remarks":""},
+      {"id":"item-1002-3","audit_id":"audit-1002","item_code":"TRN-03","question":"Is training effectiveness evaluated?","result":"PENDING","remarks":""}
+    ],
+    "non_conformities": []
+  },
+  {
+    "audit": {
+      "id": "audit-1003",
+      "code": "IA-2026-003",
+      "project_name": "Corrective Action Effectiveness",
+      "department": "Manufacturing Operations",
+      "framework": "ISO 9001:2015",
+      "planned_start_date": "2026-10-27",
+      "planned_end_date": "2026-10-28",
+      "status": "IN_PROGRESS",
+      "created_at": "2026-10-01T08:15:00Z"
+    },
+    "assignments": [
+      {"id":"assign-1003-1","audit_id":"audit-1003","auditor_name":"M. Rivera (Primary)","assignment_type":"PRIMARY","orientation_status":"COMPLETED"},
+      {"id":"assign-1003-2","audit_id":"audit-1003","auditor_name":"S. Chen (Secondary)","assignment_type":"SECONDARY","orientation_status":"COMPLETED"}
+    ],
+    "schedule": {
+      "id":"schedule-1003",
+      "audit_id":"audit-1003",
+      "scheduled_start":"2026-10-27T09:00:00Z",
+      "scheduled_end":"2026-10-28T17:00:00Z",
+      "status":"CONFIRMED",
+      "confirmations":["COMBINED","INDIVIDUAL"]
+    },
+    "checklist_items": [
+      {"id":"item-1003-1","audit_id":"audit-1003","item_code":"CAPA-01","question":"Are root causes documented for corrective actions?","result":"COMPLIANT","remarks":"Sampled records include cause analysis."},
+      {"id":"item-1003-2","audit_id":"audit-1003","item_code":"CAPA-02","question":"Is effectiveness verified after action completion?","result":"NON_COMPLIANT","remarks":"One sampled action has no effectiveness evidence."},
+      {"id":"item-1003-3","audit_id":"audit-1003","item_code":"CAPA-03","question":"Are repeat issues escalated for review?","result":"NON_COMPLIANT","remarks":"Escalation record was not located for a repeat issue."},
+      {"id":"item-1003-4","audit_id":"audit-1003","item_code":"CAPA-04","question":"Are action owners and due dates tracked?","result":"PENDING","remarks":""}
+    ],
+    "non_conformities": [
+      {"id":"nc-1003-1","audit_id":"audit-1003","checklist_item_id":"item-1003-2","item_code":"CAPA-02","status":"OPEN","finding":"Effectiveness evidence was absent in one sampled record.","correction_submitted":false,"corrective_action_submitted":false},
+      {"id":"nc-1003-2","audit_id":"audit-1003","checklist_item_id":"item-1003-3","item_code":"CAPA-03","status":"REWORK_REQUIRED","finding":"A repeat issue lacked documented escalation.","correction_submitted":true,"corrective_action_submitted":true}
+    ]
+  }
+]

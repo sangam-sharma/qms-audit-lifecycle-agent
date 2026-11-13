@@ -1,0 +1,19 @@
+[project]
+name = "qms-audit-assistant"
+version = "0.1.0"
+description = "Read-only, mock-backed QMS audit analysis MVP"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.115.12",
+  "uvicorn[standard]==0.34.2",
+  "langgraph==0.4.8",
+  "pydantic==2.11.5",
+  "httpx==0.28.1",
+]
+
+[project.optional-dependencies]
+test = ["pytest==8.3.5"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

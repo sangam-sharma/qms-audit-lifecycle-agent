@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b46">
+  <title>QMS Audit Assistant | QMS Audit Intelligence</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #172b43;
+      background: #f3f6fa;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --navy: #102b46;
+      --blue: #176b87;
+      --blue-dark: #11556c;
+      --line: #dce5ed;
+      --muted: #617487;
+      --surface: #fff;
+      --green: #18734c;
+      --red: #a63c38;
+      --amber: #946315;
+      --shadow: 0 8px 28px rgba(25, 50, 75, .055);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; }
+    button, select, textarea { font: inherit; }
+    button:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #76b9d0; outline-offset: 2px; }
+    .topbar { background: var(--navy); color: #f7fbff; }
+    .topbar-inner { max-width: 1280px; margin: 0 auto; padding: 17px 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: #1c7187; color: white; font-weight: 800; letter-spacing: -.04em; }
+    .brand-title { font-weight: 750; letter-spacing: .01em; }
+    .brand-subtitle { color: #b5c7d7; font-size: .82rem; margin-top: 2px; }
+    .topbar-meta { display: flex; align-items: center; gap: 9px; color: #d7e5ef; font-size: .84rem; }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #5ed09a; box-shadow: 0 0 0 4px #5ed09a22; }
+    main { max-width: 1280px; margin: 0 auto; padding: 31px 28px 56px; }
+    .breadcrumb { color: #73869a; font-size: .82rem; margin-bottom: 13px; }
+    .page-heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 23px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 7px; font-size: clamp(1.65rem, 3vw, 2.15rem); line-height: 1.15; letter-spacing: -.035em; color: var(--navy); }
+    .page-intro { margin-bottom: 0; color: var(--muted); font-size: .96rem; }
+    .mode-pill, .status-pill, .kind-pill { display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; padding: 6px 10px; font-size: .77rem; line-height: 1; font-weight: 720; white-space: nowrap; }
+    .mode-pill { color: #30647b; background: #e6f2f6; border: 1px solid #d3e8ef; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.62fr) minmax(280px, .78fr); gap: 18px; align-items: start; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: 13px; box-shadow: var(--shadow); }
+    .request-card { padding: 23px; }
+    .card-title-row { display: flex; align-items: start; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+    .eyebrow { color: #6e8295; font-size: .72rem; font-weight: 760; text-transform: uppercase; letter-spacing: .095em; margin-bottom: 6px; }
+    h2 { color: var(--navy); font-size: 1.08rem; letter-spacing: -.015em; margin-bottom: 0; }
+    h3 { color: var(--navy); font-size: .96rem; margin-bottom: 12px; }
+    .subcopy { color: var(--muted); font-size: .87rem; line-height: 1.5; margin: 7px 0 0; }
+    .field-label { display: block; color: #344a5e; font-size: .82rem; font-weight: 700; margin-bottom: 7px; }
+    textarea, select { width: 100%; color: #1d344a; background: #fff; border: 1px solid #cbd8e3; border-radius: 8px; }
+    textarea { min-height: 112px; resize: vertical; padding: 12px 13px; line-height: 1.5; }
+    textarea::placeholder { color: #8b9aaa; }
+    select { padding: 10px 35px 10px 11px; }
+    .examples { margin: 12px 0 20px; }
+    .examples-label { display: block; color: #718397; font-size: .75rem; font-weight: 700; margin-bottom: 8px; }
+    .prompt-list { display: flex; flex-wrap: wrap; gap: 7px; }
+    .prompt-chip { cursor: pointer; border: 1px solid #d5e1ea; border-radius: 999px; padding: 7px 10px; color: #3a6174; background: #f7fafc; font-size: .76rem; transition: border-color .15s, background .15s; }
+    .prompt-chip:hover { border-color: #84b5c5; background: #eff8fa; }
+    .controls { display: grid; grid-template-columns: minmax(190px, 1fr) auto auto; gap: 10px; align-items: end; }
+    .select-wrap { min-width: 0; }
+    .primary-button, .secondary-button { min-height: 41px; border-radius: 8px; padding: 9px 14px; font-weight: 720; cursor: pointer; transition: background .15s, border .15s; }
+    .primary-button { border: 1px solid var(--blue); background: var(--blue); color: white; box-shadow: 0 3px 9px #176b8726; }
+    .primary-button:hover:not(:disabled) { background: var(--blue-dark); border-color: var(--blue-dark); }
+    .secondary-button { border: 1px solid #cdd9e3; background: white; color: #38536b; }
+    .secondary-button:hover:not(:disabled) { background: #f4f8fb; border-color: #a8bac9; }
+    button:disabled { cursor: not-allowed; opacity: .58; }
+    .option-line { display: flex; align-items: center; gap: 8px; margin-top: 15px; color: var(--muted); font-size: .8rem; }
+    .option-line input { accent-color: var(--blue); }
+    .audit-card { padding: 21px; }
+    .audit-select-label { display: block; margin: 17px 0 7px; color: #344a5e; font-size: .8rem; font-weight: 700; }
+    .audit-context { margin-top: 17px; padding-top: 15px; border-top: 1px solid #edf1f5; }
+    .audit-code { color: var(--blue); font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .audit-project { color: var(--navy); font-weight: 740; line-height: 1.35; margin: 5px 0 9px; }
+    .status-pill { color: #725417; background: #fff5dc; }
+    .status-assigned { color: #3f5b90; background: #edf2ff; }
+    .status-active { color: #176747; background: #e7f6ee; }
+    .status-closed { color: #52677a; background: #eef2f5; }
+    .audit-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-top: 15px; }
+    .meta-label { display: block; color: #8493a1; font-size: .7rem; margin-bottom: 4px; }
+    .meta-value { color: #394f63; font-size: .8rem; font-weight: 650; }
+    .service-status { display: flex; align-items: start; gap: 8px; color: #6b7e90; font-size: .76rem; line-height: 1.4; margin-top: 19px; }
+    .service-status .live-dot { flex: 0 0 8px; margin-top: 3px; }
+    .service-status.error .live-dot { background: #d25b50; box-shadow: 0 0 0 4px #d25b5022; }
+    .execution-status { display: none; align-items: center; gap: 11px; margin-top: 18px; padding: 12px 14px; border-radius: 9px; font-size: .86rem; }
+    .execution-status.visible { display: flex; }
+    .execution-status.loading { color: #345e73; background: #eaf5f8; border: 1px solid #d5e9ef; }
+    .execution-status.success { color: #176747; background: #eaf7ef; border: 1px solid #d0ebdb; }
+    .execution-status.error { color: #9d3c35; background: #fff0ef; border: 1px solid #f3d6d3; }
+    .spinner { width: 15px; height: 15px; border-radius: 50%; border: 2px solid #a9c9d5; border-top-color: #176b87; animation: spin .75s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #results { margin-top: 20px; }
+    .empty-card { padding: 27px; text-align: center; color: var(--muted); }
+    .empty-icon { width: 42px; height: 42px; display: grid; place-items: center; margin: 0 auto 11px; border-radius: 12px; background: #eaf3f7; color: #28677f; font-size: 1.15rem; font-weight: 800; }
+    .result-heading { padding: 19px 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+    .result-heading p { color: var(--muted); font-size: .83rem; margin: 5px 0 0; }
+    .result-grid { display: grid; grid-template-columns: minmax(0, .86fr) minmax(0, 1.4fr); gap: 14px; align-items: start; }
+    .result-card { padding: 20px; min-width: 0; }
+    .section-heading { display: flex; align-items: center; gap: 9px; margin-bottom: 15px; }
+    .section-icon { width: 27px; height: 27px; border-radius: 8px; display: grid; place-items: center; color: #276881; background: #eaf4f7; font-size: .8rem; font-weight: 800; }
+    .section-count { margin-left: auto; color: #738598; font-size: .75rem; font-weight: 650; }
+    .step-list, .finding-list, .recommendation-list { display: grid; gap: 10px; }
+    .step { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; align-items: start; gap: 9px; padding: 10px; border: 1px solid #e7edf2; border-radius: 9px; background: #fcfdfe; }
+    .step-number { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; color: #276881; background: #e8f2f6; font-size: .72rem; font-weight: 800; }
+    .step-title { color: #284054; font-size: .8rem; font-weight: 720; line-height: 1.35; }
+    .step-detail { color: #77899a; font-size: .72rem; line-height: 1.45; margin-top: 3px; }
+    .step-status { color: #176747; background: #e8f6ee; border-radius: 999px; padding: 5px 7px; font-size: .65rem; font-weight: 800; text-transform: uppercase; }
+    .finding, .recommendation { border: 1px solid #e5ebf0; border-radius: 9px; padding: 12px 13px; }
+    .finding { border-left: 3px solid #8195a5; }
+    .finding.gap { border-left-color: #c34c43; }
+    .finding.pending { border-left-color: #d49a32; }
+    .finding-title { display: flex; align-items: start; justify-content: space-between; gap: 12px; color: #293f53; font-size: .83rem; font-weight: 750; }
+    .finding-detail, .recommendation-detail { color: #617487; font-size: .79rem; line-height: 1.5; margin-top: 6px; overflow-wrap: anywhere; }
+    .kind-pill { padding: 5px 7px; font-size: .65rem; text-transform: uppercase; color: #5d7082; background: #eef2f5; }
+    .kind-pill.gap { color: #a33d35; background: #fff0ee; }
+    .kind-pill.pending { color: #8b641b; background: #fff5df; }
+    .recommendation { background: #f8fbfd; }
+    .recommendation-title { color: #29465b; font-size: .82rem; font-weight: 700; line-height: 1.45; }
+    .recommendation-type { color: #748699; font-size: .66rem; font-weight: 760; text-transform: uppercase; letter-spacing: .06em; }
+    .source-card { padding: 20px; margin-top: 14px; }
+    .source-table-wrap { overflow-x: auto; }
+    .source-table { width: 100%; border-collapse: collapse; font-size: .75rem; text-align: left; }
+    .source-table th { color: #738598; font-size: .68rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 760; padding: 9px 8px; border-bottom: 1px solid #e7edf2; }
+    .source-table td { color: #41586d; padding: 10px 8px; border-bottom: 1px solid #eff3f6; vertical-align: top; overflow-wrap: anywhere; }
+    .source-table tr:last-child td { border-bottom: 0; }
+    .source-entity { color: #28677f; font-weight: 720; }
+    .policy-note { margin-top: 14px; padding: 14px 16px; border: 1px solid #f0dfb5; background: #fffaf0; border-radius: 9px; }
+    .policy-note h3 { color: #74551c; margin-bottom: 7px; font-size: .82rem; }
+    .policy-note p { color: #766746; font-size: .78rem; line-height: 1.5; margin: 0; }
+    .explanation { border-top: 1px solid #edf1f5; color: #617487; font-size: .8rem; line-height: 1.5; margin-top: 15px; padding-top: 13px; }
+    .empty-list { color: #8392a0; font-size: .8rem; padding: 13px; border: 1px dashed #d5dfe7; border-radius: 9px; }
+    @media (max-width: 900px) {
+      main { padding: 25px 20px 42px; }
+      .topbar-inner { padding-left: 20px; padding-right: 20px; }
+      .layout { grid-template-columns: minmax(0, 1.35fr) minmax(250px, .8fr); }
+      .controls { grid-template-columns: 1fr 1fr; }
+      .select-wrap { grid-column: 1 / -1; }
+      .result-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 650px) {
+      main { padding: 22px 14px 36px; }
+      .topbar-inner { padding: 13px 15px; }
+      .topbar-meta { font-size: .72rem; }
+      .brand-subtitle { font-size: .73rem; }
+      .page-heading { display: block; }
+      .page-heading .mode-pill { margin-top: 14px; }
+      .layout { grid-template-columns: 1fr; }
+      .request-card, .audit-card { padding: 17px; }
+      .controls { grid-template-columns: 1fr; }
+      .select-wrap { grid-column: auto; }
+      .primary-button, .secondary-button { width: 100%; }
+      .result-heading { align-items: start; flex-direction: column; padding: 16px; }
+      .result-card, .source-card { padding: 16px; }
+      .step { grid-template-columns: 26px minmax(0, 1fr); }
+      .step-status { grid-column: 2; justify-self: start; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">Q</div>
+        <div>
+          <div class="brand-title">QMS Audit Intelligence</div>
+          <div class="brand-subtitle">Internal audit assistant</div>
+        </div>
+      </div>
+      <div class="topbar-meta"><span class="live-dot" aria-hidden="true"></span><span id="header-status">Connecting to local service</span></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="breadcrumb">Quality management <span aria-hidden="true">/</span> Internal audit <span aria-hidden="true">/</span> Assistant</div>
+    <div class="page-heading">
+      <div>
+        <h1>Audit intelligence</h1>
+        <p class="page-intro">Plan a read-only review across audit status, checklist results and corrective actions.</p>
+      </div>
+      <span class="mode-pill">Mock QMS data <span aria-hidden="true">·</span> No write actions</span>
+    </div>
+
+    <section class="layout" aria-label="Audit task request">
+      <div class="card request-card">
+        <div class="card-title-row">
+          <div>
+            <div class="eyebrow">Agent workspace</div>
+            <h2>What would you like to review?</h2>
+            <p class="subcopy">Describe the audit task in plain language. The orchestrator builds a plan and executes only the required read-only tools.</p>
+          </div>
+        </div>
+
+        <label class="field-label" for="task-input">Task request</label>
+        <textarea id="task-input" maxlength="1000" placeholder="For example: Identify pending actions for the selected audit"></textarea>
+        <div class="examples">
+          <span class="examples-label">Example tasks</span>
+          <div class="prompt-list" id="prompt-list">
+            <button class="prompt-chip" type="button" data-template="Analyze audit">Audit analysis</button>
+            <button class="prompt-chip" type="button" data-template="Identify pending actions for audit">Pending actions</button>
+            <button class="prompt-chip" type="button" data-template="Plan to complete audit">Completion plan</button>
+            <button class="prompt-chip" type="button" data-template="Find compliance gaps for audit">Compliance gaps</button>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="select-wrap">
+            <label class="field-label" for="audit-select">Audit record</label>
+            <select id="audit-select" disabled aria-describedby="audit-select-help">
+              <option value="">Loading audit records…</option>
+            </select>
+            <span id="audit-select-help" class="subcopy">Choose a record or include an audit ID in your request.</span>
+          </div>
+          <button id="run-task" class="primary-button" type="button" disabled>Run agent task</button>
+          <button id="quick-analysis" class="secondary-button" type="button" disabled>Quick analysis</button>
+        </div>
+        <label class="option-line" for="optional-explanation">
+          <input id="optional-explanation" type="checkbox">
+          Use optional explanation wording when configured
+        </label>
+        <div id="execution-status" class="execution-status" role="status" aria-live="polite"></div>
+      </div>
+
+      <aside class="card audit-card" aria-label="Selected audit summary">
+        <div class="eyebrow">Selected record</div>
+        <h2>Audit context</h2>
+        <label class="audit-select-label" for="audit-select">Select an audit</label>
+        <div id="audit-context" class="audit-context">
+          <div class="empty-list">Audit records will appear here when the service is ready.</div>
+        </div>
+        <div id="service-status" class="service-status"><span class="live-dot" aria-hidden="true"></span><span>Checking service and sample data…</span></div>
+      </aside>
+    </section>
+
+    <section id="results" aria-label="Agent results" aria-live="polite">
+      <div class="card empty-card">
+        <div class="empty-icon" aria-hidden="true">AI</div>
+        <h2>Execution results will appear here</h2>
+        <p class="subcopy">Choose a sample audit, enter a request and run the agent. Findings, planned steps and record-level references stay separate for review.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const auditSelect = document.querySelector("#audit-select");
+    const taskInput = document.querySelector("#task-input");
+    const runButton = document.querySelector("#run-task");
+    const quickButton = document.querySelector("#quick-analysis");
+    const statusBox = document.querySelector("#execution-status");
+    const serviceBox = document.querySelector("#service-status");
+    const headerStatus = document.querySelector("#header-status");
+    const auditContext = document.querySelector("#audit-context");
+    const results = document.querySelector("#results");
+    const optionalExplanation = document.querySelector("#optional-explanation");
+    let audits = [];
+
+    const OBJECTIVES = {
+      audit_analysis: "Audit analysis",
+      pending_actions: "Pending-action identification",
+      completion_plan: "Audit completion planning",
+      compliance_gap_analysis: "Compliance gap analysis",
+    };
+
+    function node(tag, text, className) {
+      const element = document.createElement(tag);
+      if (text !== undefined && text !== null) element.textContent = String(text);
+      if (className) element.className = className;
+      return element;
+    }
+
+    function renderAuditContext() {
+      const audit = audits.find(item => item.id === auditSelect.value);
+      if (!audit) {
+        auditContext.replaceChildren(node("div", "Select an audit record to view its summary.", "empty-list"));
+        return;
+      }
+      const statusClass = audit.status === "CLOSED" ? "status-closed" : audit.status === "IN_PROGRESS" ? "status-active" : audit.status === "ASSIGNED" ? "status-assigned" : "";
+      const summary = node("div");
+      summary.append(node("div", audit.code, "audit-code"));
+      summary.append(node("div", audit.project_name, "audit-project"));
+      summary.append(node("span", audit.status.replaceAll("_", " "), `status-pill ${statusClass}`));
+      const meta = node("div", undefined, "audit-meta");
+      for (const [label, value] of [["Planned start", audit.planned_start_date], ["Planned end", audit.planned_end_date]]) {
+        const item = node("div");
+        item.append(node("span", label, "meta-label"), node("span", value, "meta-value"));
+        meta.append(item);
+      }
+      summary.append(meta);
+      auditContext.replaceChildren(summary);
+    }
+
+    function setExecutionState(kind, message) {
+      statusBox.className = `execution-status visible ${kind}`;
+      statusBox.replaceChildren();
+      if (kind === "loading") statusBox.append(node("span", undefined, "spinner"));
+      statusBox.append(node("span", message));
+    }
+
+    function showRunState(kind, message) {
+      const panel = node("div", undefined, "card empty-card");
+      if (kind === "loading") panel.append(node("span", undefined, "spinner"));
+      panel.append(node("h2", kind === "loading" ? "Agent workflow in progress" : "Request could not be completed"));
+      panel.append(node("p", message, kind === "error" ? "error" : "subcopy"));
+      results.replaceChildren(panel);
+    }
+
+    function setBusy(busy) {
+      runButton.disabled = busy || !audits.length;
+      quickButton.disabled = busy || !audits.length;
+      auditSelect.disabled = busy || !audits.length;
+      runButton.textContent = busy ? "Running plan…" : "Run agent task";
+      quickButton.textContent = busy ? "Working…" : "Quick analysis";
+      document.querySelectorAll(".prompt-chip").forEach(button => { button.disabled = busy; });
+    }
+
+    async function loadAudits() {
+      try {
+        const [healthResponse, auditsResponse] = await Promise.all([fetch("/api/health"), fetch("/api/audits")]);
+        if (!healthResponse.ok || !auditsResponse.ok) throw new Error("The local service could not load audit data.");
+        const health = await healthResponse.json();
+        audits = await auditsResponse.json();
+        auditSelect.replaceChildren();
+        for (const audit of audits) {
+          const option = node("option", `${audit.code} · ${audit.project_name}`);
+          option.value = audit.id;
+          auditSelect.append(option);
+        }
+        auditSelect.disabled = audits.length === 0;
+        runButton.disabled = audits.length === 0;
+        quickButton.disabled = audits.length === 0;
+        if (audits.length) renderAuditContext();
+        serviceBox.replaceChildren(node("span", undefined, "live-dot"), node("span", `${health.status} · ${health.data_source} provider · ${audits.length} sample audits`));
+        headerStatus.textContent = "Local agent service ready";
+        if (!audits.length) throw new Error("No sample audit records are available.");
+      } catch (error) {
+        headerStatus.textContent = "Service unavailable";
+        serviceBox.classList.add("error");
+        serviceBox.replaceChildren(node("span", undefined, "live-dot"), node("span", error.message));
+        runButton.disabled = true;
+        quickButton.disabled = true;
+      }
+    }
+
+    function formatSource(ref) {
+      return `${ref.entity}:${ref.record_id}.${ref.field}=${ref.value}`;
+    }
+
+    function renderSteps(data) {
+      const card = node("section", undefined, "card result-card");
+      const heading = node("div", undefined, "section-heading");
+      heading.append(node("span", "1", "section-icon"), node("h2", "Execution plan"), node("span", `${data.planned_steps.length} steps`, "section-count"));
+      card.append(heading);
+      if (data.plan?.rationale) card.append(node("p", data.plan.rationale, "subcopy"));
+      const list = node("div", undefined, "step-list");
+      for (const [index, item] of data.planned_steps.entries()) {
+        const step = item.step || item;
+        const status = item.status || "planned";
+        const row = node("div", undefined, "step");
+        row.append(node("span", String(index + 1).padStart(2, "0"), "step-number"));
+        const text = node("div");
+        text.append(node("div", step.description || step.tool, "step-title"));
+        text.append(node("div", `Read-only tool · ${step.tool}`, "step-detail"));
+        row.append(text, node("span", status, "step-status"));
+        list.append(row);
+      }
+      if (!data.planned_steps.length) list.append(node("div", "Quick analysis used the existing audit analysis workflow.", "empty-list"));
+      card.append(list);
+      return card;
+    }
+
+    function renderFindings(data) {
+      const card = node("section", undefined, "card result-card");
+      const heading = node("div", undefined, "section-heading");
+      heading.append(node("span", "2", "section-icon"), node("h2", "Audit findings"), node("span", `${data.findings.length}`, "section-count"));
+      card.append(heading);
+      const list = node("div", undefined, "finding-list");
+      for (const finding of data.findings) {
+        const kind = finding.kind || "fact";
+        const item = node("article", undefined, `finding ${kind}`);
+        const title = node("div", undefined, "finding-title");
+        title.append(node("span", finding.title), node("span", kind, `kind-pill ${kind}`));
+        item.append(title, node("div", finding.detail, "finding-detail"));
+        list.append(item);
+      }
+      if (!data.findings.length) list.append(node("div", "No findings were returned for this request.", "empty-list"));
+      card.append(list);
+      return card;
+    }
+
+    function renderRecommendations(data) {
+      const card = node("section", undefined, "card result-card");
+      const heading = node("div", undefined, "section-heading");
+      heading.append(node("span", "3", "section-icon"), node("h2", "Recommendations"), node("span", `${data.recommendations.length}`, "section-count"));
+      card.append(heading);
+      const list = node("div", undefined, "recommendation-list");
+      for (const recommendation of data.recommendations) {
+        const item = node("article", undefined, "recommendation");
+        item.append(node("div", recommendation.status || "recommended", "recommendation-type"));
+        item.append(node("div", recommendation.text, "recommendation-detail"));
+        list.append(item);
+      }
+      if (!data.recommendations.length) list.append(node("div", "No next-step recommendations from the selected analysis.", "empty-list"));
+      card.append(list);
+      return card;
+    }
+
+    function renderSources(data) {
+      const card = node("section", undefined, "card source-card");
+      const heading = node("div", undefined, "section-heading");
+      heading.append(node("span", "4", "section-icon"), node("h2", "Source references"), node("span", `${data.source_refs.length} records`, "section-count"));
+      card.append(heading);
+      if (!data.source_refs.length) {
+        card.append(node("div", "No source references were returned.", "empty-list"));
+        return card;
+      }
+      const wrap = node("div", undefined, "source-table-wrap");
+      const table = node("table", undefined, "source-table");
+      const head = node("thead");
+      const headerRow = node("tr");
+      for (const label of ["Record", "Field", "Recorded value"]) headerRow.append(node("th", label));
+      head.append(headerRow);
+      const body = node("tbody");
+      for (const ref of data.source_refs) {
+        const row = node("tr");
+        row.append(node("td", `${ref.entity} · ${ref.record_id}`, "source-entity"));
+        row.append(node("td", ref.field));
+        row.append(node("td", ref.value));
+        body.append(row);
+      }
+      table.append(head, body);
+      wrap.append(table);
+      card.append(wrap);
+      return card;
+    }
+
+    function renderResult(data, mode) {
+      if (data.audit_id) auditSelect.value = data.audit_id;
+      renderAuditContext();
+      const fragment = document.createDocumentFragment();
+      const heading = node("section", undefined, "card result-heading");
+      const titleBlock = node("div");
+      titleBlock.append(node("div", "Task complete", "eyebrow"), node("h2", `${data.audit_code} · ${OBJECTIVES[data.objective] || "Quick audit analysis"}`));
+      titleBlock.append(node("p", data.objective_summary || "Existing audit analysis workflow"));
+      heading.append(titleBlock, node("span", data.llm_used ? "Optional wording used" : "Deterministic result", "mode-pill"));
+      fragment.append(heading);
+
+      const grid = node("div", undefined, "result-grid");
+      grid.append(renderSteps(data));
+      const analysis = node("div");
+      analysis.append(renderFindings(data), renderRecommendations(data));
+      grid.append(analysis);
+      fragment.append(grid, renderSources(data));
+      if (data.unresolved_policies?.length) {
+        const policy = node("aside", undefined, "policy-note");
+        policy.append(node("h3", "Policy requiring confirmation"));
+        for (const item of data.unresolved_policies) policy.append(node("p", item));
+        fragment.append(policy);
+      }
+      if (data.explanation) {
+        const explanation = node("p", `${mode === "quick" ? "Analysis note" : "Agent explanation"}: ${data.explanation}`, "explanation");
+        fragment.append(explanation);
+      }
+      results.replaceChildren(fragment);
+    }
+
+    async function requestJson(url, options) {
+      const response = await fetch(url, options);
+      let body;
+      try { body = await response.json(); } catch { body = {}; }
+      if (!response.ok) throw new Error(body.detail?.message || body.detail || "The request could not be completed.");
+      return body;
+    }
+
+    function setBusy(busy) {
+      runButton.disabled = busy || audits.length === 0;
+      quickButton.disabled = busy || audits.length === 0;
+      auditSelect.disabled = busy || audits.length === 0;
+      runButton.textContent = busy ? "Running plan…" : "Run agent task";
+      quickButton.textContent = busy ? "Working…" : "Quick analysis";
+      document.querySelectorAll(".prompt-chip").forEach(button => { button.disabled = busy; });
+    }
+
+    async function runRequest(request, kind) {
+      if (!request.trim()) {
+        setExecutionState("error", "Enter a task request or choose an example prompt.");
+        taskInput.focus();
+        return;
+      }
+      setBusy(true);
+      setExecutionState("loading", kind === "quick" ? "Loading audit records and calculating findings…" : "Understanding request · planning tools · executing read-only workflow…");
+      showRunState("loading", "The previous result is cleared while this request runs.");
+      try {
+        let data;
+        if (kind === "quick") {
+          data = await requestJson(`/api/audits/${encodeURIComponent(auditSelect.value)}/analysis?include_explanation=${optionalExplanation.checked}`, { method: "POST" });
+          data = {
+            audit_id: data.audit_id,
+            audit_code: data.audit_code,
+            objective: "audit_analysis",
+            objective_summary: "Existing deterministic audit analysis",
+            planned_steps: [],
+            findings: data.facts,
+            recommendations: data.recommendations,
+            source_refs: [...data.facts, ...data.recommendations].flatMap(item => item.source_refs || []),
+            unresolved_policies: data.unresolved_policies,
+            explanation: data.explanation,
+            llm_used: data.llm_used,
+          };
+        } else {
+          let requestText = request.trim();
+          const hasAuditReference = /\b(?:audit[-_ ]\d{3,}|IA-\d{4}-\d{3,})\b/i.test(requestText);
+          if (!hasAuditReference && auditSelect.value) requestText += ` for audit ${auditSelect.value}`;
+          data = await requestJson("/api/tasks/execute", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ request_text: requestText, include_explanation: optionalExplanation.checked }),
+          });
+        }
+        renderResult(data, kind);
+        setExecutionState("success", `${OBJECTIVES[data.objective] || "Audit analysis"} completed for ${data.audit_code}.`);
+      } catch (error) {
+        setExecutionState("error", error.message);
+        showRunState("error", error.message);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    document.querySelectorAll(".prompt-chip").forEach(button => {
+      button.addEventListener("click", () => {
+        const selected = audits.find(audit => audit.id === auditSelect.value);
+        const reference = selected?.id || "audit-1003";
+        taskInput.value = `${button.dataset.template} ${reference}`;
+        taskInput.focus();
+      });
+    });
+    auditSelect.addEventListener("change", renderAuditContext);
+    runButton.addEventListener("click", () => runRequest(taskInput.value, "task"));
+    quickButton.addEventListener("click", () => runRequest("Quick audit analysis", "quick"));
+    taskInput.addEventListener("keydown", event => {
+      if ((event.metaKey || event.ctrlKey) && event.key === "Enter") runRequest(taskInput.value, "task");
+    });
+
+    loadAudits();
+  </script>
+</body>
+</html>

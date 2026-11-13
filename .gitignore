@@ -1,0 +1,38 @@
+# Python virtual environment
+myenv/
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Django
+*.log 
+
+# Environment variables
+.env
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/
+# Local databases
+*.sqlite3
+*.sqlite3-journal
+*.db
+
+# macOS
+.DS_Store
+
+# Environment-specific secrets
+.env.*
+!.env.example
+
+# Private keys
+*.pem
+*.key
